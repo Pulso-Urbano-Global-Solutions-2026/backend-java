@@ -2,6 +2,8 @@ package br.com.pulsourbano.service;
 
 import br.com.pulsourbano.exception.IngestaoException;
 import br.com.pulsourbano.exception.ResourceNotFoundException;
+import br.com.pulsourbano.model.dto.ScoreZonaResumoDTO;
+import br.com.pulsourbano.model.dto.ScoreZonasResponseDTO;
 import br.com.pulsourbano.model.entity.*;
 import br.com.pulsourbano.model.enums.ClassificacaoScore;
 import br.com.pulsourbano.model.enums.TipoDado;
@@ -78,6 +80,18 @@ public class ScoreService {
     public List<ScoreDiario> buscarHistorico(Long zonaId, int dias) {
         return scoreRepo.findByZonaIdAndDtScoreAfterOrderByDtScoreDesc(
                 zonaId, LocalDate.now().minusDays(dias));
+    }
+
+    public ScoreZonasResponseDTO listarZonasComScore() {
+        List<ScoreZonaResumoDTO> resumos = zonaRepo.findByAtivoTrue().stream()
+                .map(z -> {
+                    double score = scoreRepo.findFirstByZonaIdOrderByDtScoreDesc(z.getId())
+                            .map(ScoreDiario::getValorScore).orElse(0.0);
+                    Double lat = z.getCoordenada() != null ? z.getCoordenada().getLat() : null;
+                    Double lon = z.getCoordenada() != null ? z.getCoordenada().getLon() : null;
+                    return new ScoreZonaResumoDTO(z.getId(), z.getNome(), score, lat, lon);
+                }).toList();
+        return new ScoreZonasResponseDTO(resumos);
     }
 
     private ZonaCidade encontrarZonaMaisProxima(double lat, double lon) {
