@@ -1,0 +1,21 @@
+services:
+  oracle-dev:
+    image: gvenzl/oracle-free:23-slim-faststart
+    container_name: pulso-oracle-dev-562999
+    ports:
+      - "1521:1521"
+    environment:
+      ORACLE_PASSWORD: oracle
+      APP_USER: pulso
+      APP_USER_PASSWORD: pulso
+    volumes:
+      - pulso-oracle-dev-data:/opt/oracle/oradata
+    healthcheck:
+      test: ["CMD", "healthcheck.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+
+volumes:
+  pulso-oracle-dev-data:
+    name: pulso-oracle-dev-data-562999
