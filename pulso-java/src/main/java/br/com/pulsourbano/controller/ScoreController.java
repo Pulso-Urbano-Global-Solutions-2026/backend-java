@@ -17,14 +17,15 @@ import org.springframework.web.bind.annotation.*;
 public class ScoreController {
 
     private final ScoreService service;
+    private final ScoreModelAssembler assembler;
 
     @GetMapping("/current")
-    public ScoreCurrentResponseDTO atual(
+    public ScoreCurrentResource atual(
             @RequestParam @DecimalMin("-90") @DecimalMax("90") double lat,
             @RequestParam @DecimalMin("-180") @DecimalMax("180") double lon) {
         ScoreDiario s = service.buscarScoreAtual(lat, lon)
                 .orElseThrow(() -> new ResourceNotFoundException("Sem score para coordenadas"));
-        return new ScoreCurrentResponseDTO(
+        ScoreCurrentResponseDTO dto = new ScoreCurrentResponseDTO(
                 s.getValorScore(),
                 s.getClassificacao(),
                 s.getNo2Valor(),
@@ -34,6 +35,7 @@ public class ScoreController {
                 s.getDtScore().atStartOfDay(),
                 s.getZona().getId(),
                 s.getZona().getNome());
+        return assembler.toResource(dto);
     }
 
     @GetMapping("/historico")

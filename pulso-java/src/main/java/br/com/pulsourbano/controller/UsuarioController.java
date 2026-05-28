@@ -20,16 +20,17 @@ import org.springframework.web.bind.annotation.*;
 public class UsuarioController {
 
     private final UsuarioService service;
+    private final UsuarioModelAssembler assembler;
 
     @PostMapping
-    public ResponseEntity<UsuarioResponseDTO> criar(@Valid @RequestBody UsuarioCreateDTO dto) {
-        return ResponseEntity.status(201).body(service.criar(dto));
+    public ResponseEntity<UsuarioResource> criar(@Valid @RequestBody UsuarioCreateDTO dto) {
+        return ResponseEntity.status(201).body(assembler.toResource(service.criar(dto)));
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or @usuarioService.eDono(#id, authentication.name)")
-    public UsuarioResponseDTO buscar(@PathVariable Long id) {
-        return service.buscar(id);
+    public UsuarioResource buscar(@PathVariable Long id) {
+        return assembler.toResource(service.buscar(id));
     }
 
     @PutMapping("/{id}")
