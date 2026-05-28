@@ -80,4 +80,70 @@ Swagger UI disponível em: `http://localhost:8080/swagger-ui.html`
 
 ## Deploy
 
-A API é containerizada via `pulso-java/Dockerfile` e orquestrada pelo `docker-compose.yml` na raiz do monorepo. Para deploy em cloud, configure as variáveis de ambiente no provedor e aponte para uma instância Oracle acessível.
+A API é containerizada via `pulso-java/Dockerfile` e orquestrada pelo `docker-compose.yml` na raiz do monorepo.
+
+### Variáveis de ambiente
+
+Copie `.env.example` para `.env` e preencha os valores reais:
+
+```bash
+cp .env.example .env
+# editar .env com credenciais reais
+```
+
+### Dev local (Oracle via Docker)
+
+```bash
+# Subir Oracle local (primeira vez leva ~3 min)
+docker compose -f docker-compose.dev.yml up -d
+
+# Rodar a API
+$env:JAVA_HOME = "C:\Program Files\Java\jdk-21"
+mvn spring-boot:run
+```
+
+> **Testcontainers:** para rodar testes de integração (`*IT.java`), habilite primeiro:
+> Docker Desktop → Settings → General → **"Expose daemon on tcp://localhost:2375 without TLS"**
+
+### Deploy Fly.io (recomendado para Oracle)
+
+Fly.io suporta sidecar containers Oracle XE, o que viabiliza Oracle real em produção gratuita.
+
+```bash
+# 1. Instalar CLI e autenticar
+curl -L https://fly.io/install.sh | sh
+flyctl auth login
+
+# 2. Inicializar app (executar na pasta pulso-java)
+flyctl launch --dockerfile Dockerfile --name pulso-urbano-562999
+
+# 3. Configurar variáveis de ambiente
+flyctl secrets set \
+  DB_HOST=oracle-sidecar \
+  DB_USER=system \
+  DB_PASS=oracle \
+  JWT_SECRET=<secret-256-bits> \
+  COPERNICUS_USER=<email> \
+  COPERNICUS_PASS=<senha>
+
+# 4. Deploy
+flyctl deploy
+```
+
+### Deploy Railway (alternativa — sem Oracle nativo)
+
+Railway não suporta Oracle. Use somente se migrar para PostgreSQL.
+
+```bash
+railway login && railway init && railway up
+```
+
+### URLs públicas (atualizar pós-deploy)
+
+| Recurso | URL |
+|---|---|
+| API base | `https://pulso-urbano-562999.fly.dev` |
+| Swagger UI | `https://pulso-urbano-562999.fly.dev/swagger-ui.html` |
+| Health | `https://pulso-urbano-562999.fly.dev/actuator/health` |
+| Vídeo demo (8min) | _[YouTube link — preencher após gravação]_ |
+| Vídeo pitch (3min) | _[YouTube link — preencher após gravação]_ |
