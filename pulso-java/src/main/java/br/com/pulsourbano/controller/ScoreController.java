@@ -4,6 +4,7 @@ import br.com.pulsourbano.exception.ResourceNotFoundException;
 import br.com.pulsourbano.model.dto.*;
 import br.com.pulsourbano.model.entity.ScoreDiario;
 import br.com.pulsourbano.service.ScoreService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
@@ -20,6 +21,7 @@ public class ScoreController {
     private final ScoreModelAssembler assembler;
 
     @GetMapping("/current")
+    @Operation(summary = "Score ambiental atual por coordenada GPS")
     public ScoreCurrentResource atual(
             @RequestParam @DecimalMin("-90") @DecimalMax("90") double lat,
             @RequestParam @DecimalMin("-180") @DecimalMax("180") double lon) {
@@ -39,6 +41,7 @@ public class ScoreController {
     }
 
     @GetMapping("/historico")
+    @Operation(summary = "Histórico de scores por zona (padrão: últimos 7 dias)")
     public ScoreHistoricoResponseDTO historico(
             @RequestParam Long zonaId,
             @RequestParam(defaultValue = "7") int dias) {
@@ -48,7 +51,8 @@ public class ScoreController {
                         .toList());
     }
 
-    @GetMapping("/zonas") // público — sem autenticação (SecurityConfig)
+    @GetMapping("/zonas")
+    @Operation(summary = "Lista todas as zonas monitoradas com score mais recente (público)")
     public ScoreZonasResponseDTO zonas() {
         return service.listarZonasComScore();
     }
