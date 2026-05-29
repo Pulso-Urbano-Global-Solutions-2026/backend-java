@@ -43,3 +43,6 @@ Thumbs.db
 *.env
 application-local.properties
 application-secret.properties
+
+# Copernicus local cache (runtime, não versionar)
+cache/
