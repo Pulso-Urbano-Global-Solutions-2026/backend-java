@@ -164,11 +164,12 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <environmentVariables>
-                        <!-- Docker Desktop 4.x on Windows: tell Testcontainers to use the real engine pipe directly -->
-                        <DOCKER_HOST>npipe:////./pipe/dockerDesktopLinuxEngine</DOCKER_HOST>
-                        <TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE>npipe:////./pipe/dockerDesktopLinuxEngine</TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE>
-                    </environmentVariables>
+                    <!-- *IT.java e SmokeTest excluídos do run padrão: exigem Docker Desktop acessível -->
+                    <!-- Para rodar ITs: mvn test -Dgroups=integration -Ddocker.host=tcp://localhost:2375 -->
+                    <excludes>
+                        <exclude>**/*IT.java</exclude>
+                        <exclude>**/*SmokeTest.java</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
         </plugins>
