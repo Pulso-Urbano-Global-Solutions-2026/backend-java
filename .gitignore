@@ -1,2 +1,7 @@
 .env
 *.env
+CONTEXT.md
+GUIA_*.md
+PULSO_URBANO_JAVA_BACKLOG.md
+QUICKREF.md
+T03_HANDOFF.md
