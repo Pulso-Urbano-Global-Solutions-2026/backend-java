@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class InfraSmokeTest extends AbstractIntegrationTest {
+class InfraSmokeIT extends AbstractIntegrationTest {
 
     @Test
     void oracleContainer_isRunning_andSpringContextLoads() {

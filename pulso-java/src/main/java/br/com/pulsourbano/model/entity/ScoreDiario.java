@@ -24,16 +24,16 @@ public class ScoreDiario extends EntidadeAuditavel {
     @Column(name = "dt_score", nullable = false)
     private LocalDate dtScore;
 
-    @Column(name = "valor_score", precision = 5, scale = 2, nullable = false)
+    @Column(name = "valor_score", columnDefinition = "NUMBER(5,2)", nullable = false)
     private Double valorScore;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 15, nullable = false)
     private ClassificacaoScore classificacao;
 
-    @Column(name = "no2_valor", precision = 8, scale = 4)
+    @Column(name = "no2_valor", columnDefinition = "NUMBER(8,4)")
     private Double no2Valor;
 
-    @Column(name = "temp_valor", precision = 6, scale = 2)
+    @Column(name = "temp_valor", columnDefinition = "NUMBER(6,2)")
     private Double tempValor;
 }

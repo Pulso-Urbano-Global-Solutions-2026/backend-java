@@ -1,0 +1,43 @@
+services:
+  oracle:
+    image: gvenzl/oracle-free:23-slim-faststart
+    container_name: pulso-oracle-562999
+    ports:
+      - "1521:1521"
+    environment:
+      ORACLE_PASSWORD: ${DB_PASS:-oracle}
+    volumes:
+      - pulso-oracle-data:/opt/oracle/oradata
+    healthcheck:
+      test: ["CMD", "healthcheck.sh"]
+      interval: 120s
+      timeout: 10s
+      retries: 10
+      start_period: 120s
+
+  api:
+    build:
+      context: ./pulso-java
+      dockerfile: Dockerfile
+    container_name: pulso-api-562999
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: oracle
+      DB_PORT: 1521
+      DB_SERVICE: FREEPDB1
+      DB_USER: ${DB_USER:-system}
+      DB_PASS: ${DB_PASS:-oracle}
+      JWT_SECRET: ${JWT_SECRET:-pulso-urbano-secret-key-2026-gs-fiap-256bits-ok!}
+      COPERNICUS_USER: ${COPERNICUS_USER:-}
+      COPERNICUS_PASS: ${COPERNICUS_PASS:-}
+      NASA_EARTHDATA_TOKEN: ${NASA_EARTHDATA_TOKEN:-}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    depends_on:
+      oracle:
+        condition: service_healthy
+    restart: on-failure
+
+volumes:
+  pulso-oracle-data:
+    name: pulso-oracle-data-562999

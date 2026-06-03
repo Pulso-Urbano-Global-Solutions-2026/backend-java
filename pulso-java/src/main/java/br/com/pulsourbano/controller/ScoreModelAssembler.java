@@ -11,7 +11,7 @@ public class ScoreModelAssembler {
     public ScoreCurrentResource toResource(ScoreCurrentResponseDTO dto) {
         ScoreCurrentResource r = new ScoreCurrentResource(dto);
         r.add(linkTo(methodOn(ScoreController.class).atual(0, 0)).withSelfRel());
-        r.add(linkTo(methodOn(RecomendacaoController.class).buscar(0L, 0L)).withRel("recomendacao"));
+        r.add(linkTo(RecomendacaoController.class).withRel("recomendacao"));
         return r;
     }
 }

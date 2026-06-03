@@ -26,7 +26,7 @@ public class LeituraSatelite {
     @Column(length = 50)
     private TipoSatelite satelite;
 
-    @Column(precision = 10, scale = 4)
+    @Column(columnDefinition = "NUMBER(10,4)")
     private Double valor;
 
     @Column(length = 20)

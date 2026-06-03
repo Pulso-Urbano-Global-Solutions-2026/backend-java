@@ -10,12 +10,12 @@ import lombok.*;
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class Coordenada {
 
-    @Column(name = "lat", precision = 9, scale = 6)
+    @Column(name = "lat", columnDefinition = "NUMBER(9,6)")
     @DecimalMin(value = "-90.0")
     @DecimalMax(value = "90.0")
     private Double lat;
 
-    @Column(name = "lon", precision = 9, scale = 6)
+    @Column(name = "lon", columnDefinition = "NUMBER(9,6)")
     @DecimalMin(value = "-180.0")
     @DecimalMax(value = "180.0")
     private Double lon;
