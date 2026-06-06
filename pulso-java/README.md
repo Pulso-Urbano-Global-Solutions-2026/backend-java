@@ -74,7 +74,9 @@ docker compose up --build
 | PUT | `/api/v1/usuario/{id}` | JWT | Atualizar usuário |
 | DELETE | `/api/v1/usuario/{id}` | JWT | Deletar usuário |
 
-Swagger UI disponível em: `http://localhost:8080/swagger-ui.html`
+Swagger UI disponível em:
+- Local: `http://localhost:8080/swagger-ui.html`
+- Produção: `https://hearty-adaptation-production-6de3.up.railway.app/swagger-ui.html`
 
 ---
 
@@ -130,20 +132,29 @@ flyctl secrets set \
 flyctl deploy
 ```
 
-### Deploy Railway (alternativa — sem Oracle nativo)
+### Deploy Railway (produção atual)
 
-Railway não suporta Oracle. Use somente se migrar para PostgreSQL.
+A API está deployada no Railway conectada ao Oracle FIAP (`oracle.fiap.com.br:1521/orcl`).
 
 ```bash
-railway login && railway init && railway up
+# Redeploy (Railway CLI já configurado)
+cd pulso-java
+railway up --detach --service "hearty-adaptation"
 ```
 
-### URLs públicas (atualizar pós-deploy)
+Variáveis configuradas no Railway:
+- `DB_HOST=oracle.fiap.com.br`, `DB_PORT=1521`, `DB_SERVICE=orcl`, `DB_USER=rm562999`
+- `SPRING_JPA_HIBERNATE_DDL_AUTO=none`
+- `SPRING_MAIN_LAZY_INITIALIZATION=true`
+- `SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE=1`
+- `JWT_SECRET`, `COPERNICUS_USER`/`COPERNICUS_PASS`, `NASA_EARTHDATA_TOKEN` configurados
+
+### URLs públicas
 
 | Recurso | URL |
 |---|---|
-| API base | `https://pulso-urbano-562999.fly.dev` |
-| Swagger UI | `https://pulso-urbano-562999.fly.dev/swagger-ui.html` |
-| Health | `https://pulso-urbano-562999.fly.dev/actuator/health` |
+| API base | `https://hearty-adaptation-production-6de3.up.railway.app` |
+| Swagger UI | `https://hearty-adaptation-production-6de3.up.railway.app/swagger-ui.html` |
+| Health | `https://hearty-adaptation-production-6de3.up.railway.app/actuator/health` |
 | Vídeo demo (8min) | _[YouTube link — preencher após gravação]_ |
 | Vídeo pitch (3min) | _[YouTube link — preencher após gravação]_ |
