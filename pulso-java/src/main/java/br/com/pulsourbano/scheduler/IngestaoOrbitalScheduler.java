@@ -1,7 +1,9 @@
 package br.com.pulsourbano.scheduler;
 
+import br.com.pulsourbano.model.entity.ScoreDiario;
 import br.com.pulsourbano.model.entity.ZonaCidade;
 import br.com.pulsourbano.repository.ZonaCidadeRepository;
+import br.com.pulsourbano.service.AlertaNetClient;
 import br.com.pulsourbano.service.CopernicusApiService;
 import br.com.pulsourbano.service.NasaEarthDataService;
 import br.com.pulsourbano.service.ScoreService;
@@ -22,6 +24,7 @@ public class IngestaoOrbitalScheduler {
     private final NasaEarthDataService nasa;
     private final ScoreService scoreService;
     private final ZonaCidadeRepository zonaRepo;
+    private final AlertaNetClient alertaNetClient;
 
     @Scheduled(cron = "0 0 6 * * *", zone = "UTC")
     public void ingerirDadosOrbitais() {
@@ -33,7 +36,11 @@ public class IngestaoOrbitalScheduler {
             try {
                 double no2  = copernicus.buscarNo2(z.getCoordenada().getLat(), z.getCoordenada().getLon());
                 double temp = nasa.buscarTempSuperficie(z.getCoordenada().getLat(), z.getCoordenada().getLon());
-                scoreService.calcularEPersistir(z, no2, temp);
+                ScoreDiario score = scoreService.calcularEPersistir(z, no2, temp);
+                String textoRecomendacao = "Qualidade do ar " + score.getClassificacao().name()
+                        + " na zona " + z.getNome();
+                alertaNetClient.notificar(z.getId(), score.getValorScore(), no2,
+                        score.getClassificacao(), textoRecomendacao);
                 sucessos++;
             } catch (Exception e) {
                 falhas++;
