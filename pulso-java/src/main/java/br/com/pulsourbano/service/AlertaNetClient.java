@@ -4,6 +4,7 @@ import br.com.pulsourbano.model.enums.ClassificacaoScore;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ public class AlertaNetClient {
     private final String dotnetApiUrl;
     private final String jwtSecret;
 
+    @Autowired
     public AlertaNetClient(
             @Value("${dotnet.api.url:http://localhost:5000}") String dotnetApiUrl,
             @Value("${jwt.secret}") String jwtSecret) {
