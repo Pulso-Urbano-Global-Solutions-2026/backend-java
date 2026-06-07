@@ -43,6 +43,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/usuario").permitAll()
                         .requestMatchers("/api/v1/score/zonas").permitAll()
                         .requestMatchers("/api/v1/mapa/**").permitAll()
+                        .requestMatchers("/api/v1/vulnerabilidade/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/api-docs/**", "/actuator/health").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
