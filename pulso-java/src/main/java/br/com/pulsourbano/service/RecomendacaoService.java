@@ -12,6 +12,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.ParameterMode;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -20,6 +21,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class RecomendacaoService {
 
     private final RecomendacaoRepository recRepo;
@@ -52,16 +54,20 @@ public class RecomendacaoService {
         if (Boolean.TRUE.equals(u.getTemCrianca()))   personalizadoPara.add("crianca_em_casa");
         if (Boolean.TRUE.equals(u.getTemProblemaResp())) personalizadoPara.add("problema_respiratorio");
 
-        em.createStoredProcedureQuery("registrar_recomendacao")
-                .registerStoredProcedureParameter("p_score_id",   Long.class,   ParameterMode.IN)
-                .registerStoredProcedureParameter("p_usuario_id", Long.class,   ParameterMode.IN)
-                .registerStoredProcedureParameter("p_texto",      String.class, ParameterMode.IN)
-                .registerStoredProcedureParameter("p_icone",      String.class, ParameterMode.IN)
-                .setParameter("p_score_id",   scoreId)
-                .setParameter("p_usuario_id", usuarioId)
-                .setParameter("p_texto",      texto)
-                .setParameter("p_icone",      icone)
-                .execute();
+        try {
+            em.createStoredProcedureQuery("registrar_recomendacao")
+                    .registerStoredProcedureParameter("p_score_id",   Long.class,   ParameterMode.IN)
+                    .registerStoredProcedureParameter("p_usuario_id", Long.class,   ParameterMode.IN)
+                    .registerStoredProcedureParameter("p_texto",      String.class, ParameterMode.IN)
+                    .registerStoredProcedureParameter("p_icone",      String.class, ParameterMode.IN)
+                    .setParameter("p_score_id",   scoreId)
+                    .setParameter("p_usuario_id", usuarioId)
+                    .setParameter("p_texto",      texto)
+                    .setParameter("p_icone",      icone)
+                    .execute();
+        } catch (Exception e) {
+            log.warn("registrar_recomendacao procedure indisponível (non-fatal): {}", e.getMessage());
+        }
 
         return new RecomendacaoResponseDTO(texto, icone,
                 score.getClassificacao().name(), personalizadoPara, LocalDateTime.now());
