@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 // HATEOAS wrapper (ScoreCurrentResource) será adicionado em T-35.
 // Records não podem estender classes em Java.
 public record ScoreCurrentResponseDTO(
+        Long scoreId,
         Double score,
         ClassificacaoScore classificacao,
         Double no2Ppb,

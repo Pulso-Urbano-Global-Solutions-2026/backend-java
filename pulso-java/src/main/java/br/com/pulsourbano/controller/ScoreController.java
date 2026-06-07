@@ -28,6 +28,7 @@ public class ScoreController {
         ScoreDiario s = service.buscarScoreAtual(lat, lon)
                 .orElseThrow(() -> new ResourceNotFoundException("Sem score para coordenadas"));
         ScoreCurrentResponseDTO dto = new ScoreCurrentResponseDTO(
+                s.getId(),
                 s.getValorScore(),
                 s.getClassificacao(),
                 s.getNo2Valor(),
