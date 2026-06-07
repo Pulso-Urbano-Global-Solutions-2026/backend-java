@@ -38,8 +38,16 @@ public class ZonaSeedInitializer implements ApplicationRunner {
     );
 
     @Override
-    @Transactional
     public void run(ApplicationArguments args) {
+        try {
+            seedInterno();
+        } catch (Exception e) {
+            log.warn("ZonaSeedInitializer: falhou (non-fatal) — {}", e.getMessage());
+        }
+    }
+
+    @Transactional
+    public void seedInterno() {
         if (zonaRepo.count() > 0) {
             log.info("ZonaSeedInitializer: zonas já existem, pulando seed.");
             return;
