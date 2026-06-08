@@ -134,6 +134,115 @@ Implementada tanto na stored procedure PL/SQL `calcular_score_zona()` quanto no 
 
 ---
 
+## Estrutura de pacotes
+
+```
+pulso-java/
+├── src/
+│   ├── main/java/br/com/pulsourbano/
+│   │   ├── PulsoUrbanoApplication.java          ← entry point Spring Boot
+│   │   │
+│   │   ├── config/                              ← configuração da aplicação
+│   │   │   ├── JwtAuthenticationFilter.java     ← filtro JWT (OncePerRequestFilter)
+│   │   │   ├── JwtConfig.java                   ← geração/validação HS256 (JJWT 0.12.5)
+│   │   │   ├── SecurityConfig.java              ← SecurityFilterChain + CORS
+│   │   │   ├── SwaggerConfig.java               ← SpringDoc OpenAPI 2.5.0
+│   │   │   └── ZonaSeedInitializer.java         ← seed de zonas na primeira inicialização
+│   │   │
+│   │   ├── controller/                          ← camada HTTP (REST)
+│   │   │   ├── AuthController.java              ← POST /auth/register + /auth/login
+│   │   │   ├── MapaController.java              ← GET /mapa/camadas (GeoJSON Leaflet)
+│   │   │   ├── RecomendacaoController.java      ← GET /recomendacao
+│   │   │   ├── ScoreController.java             ← GET /score/current + /historico + /zonas
+│   │   │   ├── ScoreCurrentResource.java        ← RepresentationModel HATEOAS do score
+│   │   │   ├── ScoreModelAssembler.java         ← monta _links do score
+│   │   │   ├── UsuarioController.java           ← CRUD /usuario/{id}
+│   │   │   ├── UsuarioModelAssembler.java       ← monta _links do usuário
+│   │   │   ├── UsuarioResource.java             ← RepresentationModel HATEOAS do usuário
+│   │   │   └── VulnerabilidadeController.java   ← GET /vulnerabilidade/zonas (público)
+│   │   │
+│   │   ├── exception/                           ← tratamento global de erros
+│   │   │   ├── EmailJaExisteException.java      ← 409 Conflict
+│   │   │   ├── ErrorResponseDTO.java            ← DTO de erro padronizado (Java Record)
+│   │   │   ├── GlobalExceptionHandler.java      ← @RestControllerAdvice
+│   │   │   ├── IngestaoException.java           ← 503 falha de ingestão orbital
+│   │   │   └── ResourceNotFoundException.java   ← 404 Not Found
+│   │   │
+│   │   ├── model/
+│   │   │   ├── dto/                             ← Java Records de request/response
+│   │   │   │   ├── AuthRequestDTO.java
+│   │   │   │   ├── AuthResponseDTO.java
+│   │   │   │   ├── MapaCamadaDTO.java / MapaFeatureDTO.java / MapaGeometryDTO.java
+│   │   │   │   ├── RecomendacaoResponseDTO.java
+│   │   │   │   ├── RegisterRequestDTO.java
+│   │   │   │   ├── ScoreCurrentResponseDTO.java / ScoreHistoricoItemDTO.java
+│   │   │   │   ├── ScoreHistoricoResponseDTO.java
+│   │   │   │   ├── ScoreZonaResumoDTO.java / ScoreZonasResponseDTO.java
+│   │   │   │   ├── UsuarioCreateDTO.java / UsuarioResponseDTO.java / UsuarioUpdateDTO.java
+│   │   │   │   └── VulnerabilidadeZonaDTO.java
+│   │   │   │
+│   │   │   ├── entity/                          ← entidades JPA (@Entity)
+│   │   │   │   ├── EntidadeAuditavel.java       ← @MappedSuperclass com dtCriacao/dtAtualizacao
+│   │   │   │   ├── Usuario.java
+│   │   │   │   ├── ZonaCidade.java
+│   │   │   │   ├── ScoreDiario.java
+│   │   │   │   ├── LeituraSatelite.java         ← @EmbeddedId composto
+│   │   │   │   ├── LeituraSateliteId.java       ← chave composta (zonaId, tipoDado, dtCaptura)
+│   │   │   │   ├── Coordenada.java              ← @Embeddable lat/lon
+│   │   │   │   ├── Recomendacao.java
+│   │   │   │   └── LogConsulta.java
+│   │   │   │
+│   │   │   └── enums/
+│   │   │       ├── ClassificacaoScore.java      ← BOM / MODERADO / RUIM / CRITICO
+│   │   │       ├── TipoDado.java                ← NO2 / TEMPERATURA
+│   │   │       └── TipoSatelite.java            ← SENTINEL5P / OPEN_METEO
+│   │   │
+│   │   ├── repository/                          ← JpaRepository<E, ID>
+│   │   │   ├── LeituraSateliteRepository.java
+│   │   │   ├── LogConsultaRepository.java
+│   │   │   ├── RecomendacaoRepository.java
+│   │   │   ├── ScoreDiarioRepository.java
+│   │   │   ├── UsuarioRepository.java
+│   │   │   └── ZonaCidadeRepository.java
+│   │   │
+│   │   ├── scheduler/
+│   │   │   └── IngestaoOrbitalScheduler.java    ← @Scheduled cron 6h UTC
+│   │   │
+│   │   └── service/                             ← lógica de negócio
+│   │       ├── AuthService.java                 ← register + login + BCrypt
+│   │       ├── ScoreService.java                ← calcularScore() + stored procedure
+│   │       ├── RecomendacaoService.java         ← texto personalizado por perfil
+│   │       ├── UsuarioService.java              ← CRUD + verificação de dono
+│   │       ├── MapaService.java                 ← montagem GeoJSON
+│   │       ├── VulnerabilidadeService.java      ← índice de vulnerabilidade por zona
+│   │       ├── CopernicusApiService.java        ← OAuth2 + catálogo OData Sentinel-5P
+│   │       ├── NasaEarthDataService.java        ← AppEEARS (temperatura)
+│   │       ├── OpenMeteoFallbackService.java    ← fallback sempre-on
+│   │       └── AlertaNetClient.java             ← client HTTP API .NET
+│   │
+│   └── test/java/br/com/pulsourbano/
+│       ├── AbstractIntegrationTest.java         ← base Testcontainers (Oracle 23c)
+│       ├── InfraSmokeIT.java                    ← smoke test de infra
+│       ├── config/JwtConfigTest.java
+│       ├── controller/
+│       │   ├── AuthFlowIT.java                  ← fluxo register → login → JWT
+│       │   └── ScoreFlowIT.java
+│       ├── exception/GlobalExceptionHandlerTest.java
+│       └── model/
+│           ├── dto/AuthRequestDTOTest.java
+│           └── entity/
+│               ├── CoordenadaTest.java / EntidadeAuditavelTest.java
+│               ├── LeituraSateliteIdTest.java / LogConsultaTest.java
+│               ├── RecomendacaoTest.java / ScoreDiarioTest.java
+│
+├── Dockerfile                                   ← multi-stage: Maven builder + JRE Alpine slim
+├── docker-compose.dev.yml                       ← Oracle 23c local para desenvolvimento
+├── railway.toml                                 ← build config Railway CI/CD
+└── pom.xml                                      ← dependências Maven (Spring Boot BOM 3.2.5)
+```
+
+---
+
 ## Como rodar localmente
 
 ### Pré-requisitos
