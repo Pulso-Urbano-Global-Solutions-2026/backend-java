@@ -26,8 +26,8 @@ Esta é a API que sustenta tudo isso. Construída em Java 21 com Spring Boot 3.2
 | **Swagger UI** | `https://hearty-adaptation-production-6de3.up.railway.app/swagger-ui.html` |
 | **OpenAPI JSON** | `https://hearty-adaptation-production-6de3.up.railway.app/api-docs` |
 | **Health check** | `https://hearty-adaptation-production-6de3.up.railway.app/actuator/health` |
-| **Vídeo demo (8 min)** | _[YouTube — preencher após gravação]_ |
-| **Vídeo pitch (3 min)** | _[YouTube — preencher após gravação]_ |
+| **Vídeo demo (8 min)** | https://youtu.be/ZTe-8x3eBoc |
+| **Vídeo pitch (3 min)** | https://youtu.be/dGy20MDjnL4 |
 
 ---
 

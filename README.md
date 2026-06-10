@@ -21,6 +21,8 @@ Transforma dados orbitais reais (Sentinel-5P NO₂ + ECOSTRESS temperatura) em u
 | **OpenAPI JSON** | `https://hearty-adaptation-production-6de3.up.railway.app/api-docs` |
 | **Health check** | `https://hearty-adaptation-production-6de3.up.railway.app/actuator/health` |
 | **README completo da API** | [`pulso-java/README.md`](pulso-java/README.md) |
+| **Vídeo pitch (3 min)** | https://youtu.be/dGy20MDjnL4 |
+| **Vídeo demo (8 min)** | https://youtu.be/ZTe-8x3eBoc |
 
 ---
 
